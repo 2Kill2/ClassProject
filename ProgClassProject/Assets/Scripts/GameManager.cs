@@ -32,15 +32,15 @@ namespace LabWork
         private int cols = 3;
         private (int row, int col) playerPos;
         private System.Random rng = new System.Random();
-
+        
         public void Start()
         {
-            GenerateMap(3, 3);
+            GenerateMap(rows, cols);
             DrawMap(map, playerPos);
-            VisualizeMap();
+            //VisualizeMap();
         }
 
-        private void VisualizeMap()
+        /*private void VisualizeMap()
         {
             for (int x = 0; x < mapSize; x++)
             {
@@ -50,7 +50,7 @@ namespace LabWork
                     mapRoomRep.transform.position = new Vector3(x * 2, 0, z * 2);
                 }
             }
-        }
+        }*/
 
         static void Main(string[] args)
         {
@@ -237,7 +237,9 @@ namespace LabWork
 
         private Room[,] GenerateMap(int rows, int cols)
         {
+            //this is not running
             Room[,] map = new Room[rows, cols];
+
             System.Random rng = new System.Random();
             int counter = 1; // for unique room names
 
@@ -312,6 +314,7 @@ namespace LabWork
                     {
                         //mark visited rooms
                         Console.Write(map[r, c]?.beenHere == true ? "| . " : "|  ");
+
                     }
                     else
                     {
