@@ -1,10 +1,15 @@
-﻿using System;
+﻿using UnityEngine;
+using System;
 using System.Collections.Generic;
 
 namespace LabWork
 {
-    internal class GameManager
+    internal class GameManager : MonoBehaviour
     {
+        int mapSize = 3;
+        public int Mapsize => mapSize;
+        Room[] Rooms;
+
         public List<int> Inventory { get; set; } = new List<int>();
         public void ShowInventory()
         {
@@ -26,21 +31,41 @@ namespace LabWork
         private int rows = 3;
         private int cols = 3;
         private (int row, int col) playerPos;
-        private Random rng = new Random();
+        private System.Random rng = new System.Random();
+
+        public void Start()
+        {
+            GenerateMap(3, 3);
+            DrawMap(map, playerPos);
+            VisualizeMap();
+        }
+
+        private void VisualizeMap()
+        {
+            for (int x = 0; x < mapSize; x++)
+            {
+                for (int z = 0; z < mapSize; z++)
+                {
+                    var mapRoomRep = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    mapRoomRep.transform.position = new Vector3(x * 2, 0, z * 2);
+                }
+            }
+        }
 
         static void Main(string[] args)
         {
             GameManager gameManager = new GameManager();
-            Console.WriteLine("Welcome to the Dice Battle Adventure Game!");
-            Console.WriteLine("What is your name?");
+            Debug.Log("Welcome to the Dice Battle Adventure Game!");
+            Debug.Log("What is your name?");
 
             string playerName = Console.ReadLine();
 
-            Console.WriteLine($"Hello, {playerName}! Let's start your adventure.");
-            Console.WriteLine("Press ENTER to continue...");
-            Console.ReadLine();
+            Debug.Log($"Hello, {playerName}! Let's start your adventure.");
+            Debug.Log("Press ENTER to continue...");
+            //Console.ReadLine();
 
-            gameManager.ExploreRooms();
+
+            //gameManager.ExploreRooms();
         }
 
         // Game starting point
@@ -164,7 +189,7 @@ namespace LabWork
                 Console.WriteLine(currentRoom.RoomEntered(this));
 
                 Console.WriteLine("What' next?");
-                string cmd = Console.ReadLine().ToLower();
+                string cmd = Console.ReadLine(); //.ToLower();
 
                 switch (cmd)
                 {
@@ -210,11 +235,10 @@ namespace LabWork
             }
         }
 
-        //chat gpt helped me with this function because I was struggling to make it work
         private Room[,] GenerateMap(int rows, int cols)
         {
             Room[,] map = new Room[rows, cols];
-            Random rng = new Random();
+            System.Random rng = new System.Random();
             int counter = 1; // for unique room names
 
             for (int r = 0; r < rows; r++)
@@ -258,8 +282,8 @@ namespace LabWork
 
         public void DrawMap(Room[,] map, (int row, int col) playerPos)
         {
-            int rows = map.GetLength(0);
-            int cols = map.GetLength(1);
+            //int rows = map.GetLength(0);
+            //int cols = map.GetLength(1);
 
             Console.WriteLine();
 
@@ -269,8 +293,11 @@ namespace LabWork
                 for (int c = 0; c < cols; c++)
                 {
                     Console.Write("+---");
+                    var mapRoomRep = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    mapRoomRep.transform.position = new Vector3(r, 0 , c);
                 }
                 Console.WriteLine("+");
+                
 
 
                 //middle cel with player symbol
@@ -289,6 +316,10 @@ namespace LabWork
                     else
                     {
                         Console.Write("|  ");
+
+                        var mapRoomRep = GameObject.CreatePrimitive(PrimitiveType.Cube);
+
+                        mapRoomRep.transform.position = new Vector3(r, 0, c);
                     }
                 }
                 Console.WriteLine("|");
@@ -297,6 +328,9 @@ namespace LabWork
                 for (int c = 0; c < map.GetLength(1); c++)
                 {
                     Console.Write("+---");
+                    var mapRoomRep = GameObject.CreatePrimitive(PrimitiveType.Cube);
+
+                        mapRoomRep.transform.position = new Vector3(r, 0, c);
                 }
                 Console.WriteLine("+");
             }
@@ -449,7 +483,7 @@ namespace LabWork
                 if (!treasureTaken)
                 {
                     int[] treasure = { 4, 6, 8, 20 };
-                    Random rng = new Random();
+                    System.Random rng = new System.Random();
                     int newDie = treasure[rng.Next(treasure.Length)];
                     Console.WriteLine($"You look around and find a d{newDie}, you take it.");
                     game.Inventory.Add(newDie);
