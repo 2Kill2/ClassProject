@@ -37,20 +37,9 @@ namespace LabWork
         {
             GenerateMap(rows, cols);
             DrawMap(map, playerPos);
-            //VisualizeMap();
+            
         }
 
-        /*private void VisualizeMap()
-        {
-            for (int x = 0; x < mapSize; x++)
-            {
-                for (int z = 0; z < mapSize; z++)
-                {
-                    var mapRoomRep = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    mapRoomRep.transform.position = new Vector3(x * 2, 0, z * 2);
-                }
-            }
-        }*/
 
         static void Main(string[] args)
         {
