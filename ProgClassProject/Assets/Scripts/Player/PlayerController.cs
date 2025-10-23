@@ -10,8 +10,6 @@ public class PlayerController : MonoBehaviour
 
     [Header("Settings")]
     public float moveSpeed = 5f;
-    private float rotationX = 0f;
-    private float rotationY = 0f;
 
     [Header("References")]
     private CharacterController cc;
@@ -32,11 +30,13 @@ public class PlayerController : MonoBehaviour
         //movement input
         if (Input.GetKeyDown(KeyCode.W))
         {
+            //make a smooth transition later
             transform.position += transform.forward * 2;
             playerPos.pprow += 1;
         }
         if (Input.GetKeyDown(KeyCode.S))
         {
+            //ditto
             transform.position -= transform.forward * 2;
             playerPos.pprow -= 1;
         }
@@ -60,7 +60,9 @@ public class PlayerController : MonoBehaviour
     public void SpawnPlayer()
     {
         playerPos = (1, 1);
-        playerprefab = Instantiate(playerprefab, new Vector3(playerPos.ppcol * 2, 1, playerPos.pprow * 2), Quaternion.identity);
+        playerprefab = Instantiate(playerprefab, new Vector3(playerPos.ppcol * 2, 1, 
+            playerPos.pprow * 2),
+            Quaternion.identity);
 
     }
 

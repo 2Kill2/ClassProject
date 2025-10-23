@@ -132,7 +132,6 @@ GameObject:
   - component: {fileID: 41285246}
   - component: {fileID: 41285245}
   - component: {fileID: 41285244}
-  - component: {fileID: 41285243}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -140,36 +139,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &41285243
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 41285242}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
-  m_NotificationBehavior: 0
-  m_UIInputModule: {fileID: 0}
-  m_DeviceLostEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_DeviceRegainedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ControlsChangedEvent:
-    m_PersistentCalls:
-      m_Calls: []
-  m_ActionEvents: []
-  m_NeverAutoSwitchControlSchemes: 0
-  m_DefaultControlScheme: Keyboard&Mouse
-  m_DefaultActionMap: Player
-  m_SplitScreenIndex: -1
-  m_Camera: {fileID: 0}
 --- !u!114 &41285244
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -184,7 +153,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerCamera: {fileID: 1130070485}
   moveSpeed: 5
-  lookSensitivity: 2
 --- !u!136 &41285245
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -515,6 +483,7 @@ MonoBehaviour:
   InventoryText: {fileID: 57763684}
   mapMaster: {fileID: 1507112125}
   battleMaster: {fileID: 1019650199}
+  pc: {fileID: 41285244}
 --- !u!4 &634890243
 Transform:
   m_ObjectHideFlags: 0
@@ -1147,7 +1116,7 @@ Transform:
   m_GameObject: {fileID: 1130070484}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 3.6532354, y: 7.0348215, z: -0.41408634}
+  m_LocalPosition: {x: 0, y: 0.811, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1219,7 +1188,6 @@ MonoBehaviour:
   - {fileID: 7916520067327557824, guid: d41100606f601c94facd1387691f35df, type: 3}
   RoomSize: 2
   RoomSpacing: 2.5
-  MapSize: 5
   Rows: 5
   cols: 5
 --- !u!4 &1507112126
