@@ -31,13 +31,13 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.W))
         {
             //make a smooth transition later
-            transform.position += transform.forward * 2;
+            transform.position += transform.forward * 5;
             playerPos.pprow += 1;
         }
         if (Input.GetKeyDown(KeyCode.S))
         {
             //ditto
-            transform.position -= transform.forward * 2;
+            transform.position -= transform.forward * 5;
             playerPos.pprow -= 1;
         }
         if (Input.GetKeyDown(KeyCode.A))
