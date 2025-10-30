@@ -1,0 +1,21 @@
+using UnityEditor.Build;
+using UnityEngine;
+
+[CreateAssetMenu(fileName = "GridSettings", menuName = "Scriptable Objects/GridSettings")]
+public class GridSettings : ScriptableObject
+{
+    [SerializeField] private int _gridSizeX = 10;
+    [SerializeField] private int _gridSizeY = 10;
+    [SerializeField] private float _nodeSize = 1f;
+    [SerializeField] private bool _useXZPlane = true;
+
+    public int GridSizeX => _gridSizeX;
+    public int GridSizeY => _gridSizeY;
+    public float NodeSize => _nodeSize;
+    public bool useXZPlane => _useXZPlane;
+
+    public int MinimumTreasureRooms;
+    public int MinumimCombatRooms;
+
+    public int BossRooms;
+}
