@@ -7,12 +7,13 @@ public class Room : MonoBehaviour
     [SerializeField] private GameObject NorthDoor, EastDoor, SouthDoor, WestDoor;
     public Room north, east, south, west;
 
+    GameMaster gm;
     public enum RoomType { safe, Treasure, Encounter }
     [SerializeField] public RoomType rType;
 
     public void Start()
     {
-        RandomizeDoors();
+        //RandomizeDoors();
     }
 
     public virtual void EnterRoom()
@@ -27,7 +28,6 @@ public class Room : MonoBehaviour
     //maybe read player position and compare it to what mapmaster spawned in that spot
     public string RoomSearch()
     {
-        GameMaster gm = FindFirstObjectByType<GameMaster>();
         switch (rType)
         {
             case RoomType.safe:
@@ -56,8 +56,9 @@ public class Room : MonoBehaviour
         }
     }
 
-    public void SetRooms(Room roomNorth, Room roomEast, Room roomSouth, Room roomWest)
+    public void SetRooms(Room roomNorth, Room roomEast, Room roomSouth, Room roomWest, GameMaster gameMaster)
     {
+        gm = gameMaster;
         north = roomNorth;
         NorthDoor.SetActive(north == null);
         east = roomEast;

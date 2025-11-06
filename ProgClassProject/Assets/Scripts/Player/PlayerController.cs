@@ -6,7 +6,7 @@ public class PlayerController : MonoBehaviour
     [Header("Prefabs")]
     public Camera playerCamera;
     private Rigidbody playerRigidbody;
-    private GameObject playerprefab;
+    public GameObject playerprefab;
 
     [Header("Settings")]
     public float moveSpeed = 5f;
@@ -98,11 +98,11 @@ public class PlayerController : MonoBehaviour
     public void SpawnPlayer()
     {
         playerPos = (1, 1);
-        playerprefab = Instantiate(playerprefab, new Vector3(playerPos.ppcol * 2, 1, 
-            playerPos.pprow * 2),
+        GameObject newPlayer = Instantiate(playerprefab,
+            new Vector3(playerPos.ppcol * 2, 1, playerPos.pprow * 2),
             Quaternion.identity);
-
     }
+
 
 
 

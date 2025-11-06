@@ -39,9 +39,6 @@ public class GameMaster : MonoBehaviour
     {
         mapMaster.CreateMap();
         Debug.Log("Map created.");
-
-        //spawn player
-        pc.SpawnPlayer();
     }
 
     private void Update()

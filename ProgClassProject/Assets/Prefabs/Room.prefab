@@ -292,6 +292,10 @@ MonoBehaviour:
   EastDoor: {fileID: 4078973598157076089}
   SouthDoor: {fileID: 994904621254249050}
   WestDoor: {fileID: 3404072241446418083}
+  north: {fileID: 0}
+  east: {fileID: 0}
+  south: {fileID: 0}
+  west: {fileID: 0}
   rType: 0
 --- !u!1001 &2064514514031129101
 PrefabInstance:
@@ -341,13 +345,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1254320083794638935, guid: 14e479e36766127459ae9c25c387e5d5, type: 3}
+      propertyPath: m_Name
+      value: DoorW
+      objectReference: {fileID: 0}
     - target: {fileID: 3677442475174608533, guid: 14e479e36766127459ae9c25c387e5d5, type: 3}
       propertyPath: m_Name
       value: DoorS
       objectReference: {fileID: 0}
     - target: {fileID: 7508035387154832622, guid: 14e479e36766127459ae9c25c387e5d5, type: 3}
       propertyPath: m_Name
-      value: WallS
+      value: WallW
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -412,13 +420,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1254320083794638935, guid: 14e479e36766127459ae9c25c387e5d5, type: 3}
+      propertyPath: m_Name
+      value: DoorS
+      objectReference: {fileID: 0}
     - target: {fileID: 3677442475174608533, guid: 14e479e36766127459ae9c25c387e5d5, type: 3}
       propertyPath: m_Name
       value: DoorE
       objectReference: {fileID: 0}
     - target: {fileID: 7508035387154832622, guid: 14e479e36766127459ae9c25c387e5d5, type: 3}
       propertyPath: m_Name
-      value: WallE
+      value: WallS
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -483,13 +495,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1254320083794638935, guid: 14e479e36766127459ae9c25c387e5d5, type: 3}
+      propertyPath: m_Name
+      value: DoorN
+      objectReference: {fileID: 0}
     - target: {fileID: 3677442475174608533, guid: 14e479e36766127459ae9c25c387e5d5, type: 3}
       propertyPath: m_Name
       value: DoorW
       objectReference: {fileID: 0}
     - target: {fileID: 7508035387154832622, guid: 14e479e36766127459ae9c25c387e5d5, type: 3}
       propertyPath: m_Name
-      value: WallW
+      value: WallN
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -554,13 +570,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1254320083794638935, guid: 14e479e36766127459ae9c25c387e5d5, type: 3}
+      propertyPath: m_Name
+      value: DoorE
+      objectReference: {fileID: 0}
     - target: {fileID: 3677442475174608533, guid: 14e479e36766127459ae9c25c387e5d5, type: 3}
       propertyPath: m_Name
       value: DoorN
       objectReference: {fileID: 0}
     - target: {fileID: 7508035387154832622, guid: 14e479e36766127459ae9c25c387e5d5, type: 3}
       propertyPath: m_Name
-      value: WallN
+      value: WallE
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
