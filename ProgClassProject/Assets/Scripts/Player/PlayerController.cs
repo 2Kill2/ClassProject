@@ -13,13 +13,14 @@ public class PlayerController : MonoBehaviour
 
     [Header("References")]
     private CharacterController cc;
+    private GameMaster gm;
 
     public (int pprow, int ppcol) playerPos;
 
     void Start()
     {
         playerRigidbody = GetComponent<Rigidbody>();
-
+        gm = FindFirstObjectByType<GameMaster>();
         Cursor.lockState = CursorLockMode.Locked;
     }
 
@@ -50,9 +51,17 @@ public class PlayerController : MonoBehaviour
         }
 
         //add search button
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.F))
         {
-            //do this later
+            if (gm != null)
+            {
+                Debug.Log("searching room");
+                gm.SearchRoom();
+            }
+            else
+            {
+                Debug.LogWarning("GameMaster not Found! (playercontroller.cs)");
+            }
         }
     }
 

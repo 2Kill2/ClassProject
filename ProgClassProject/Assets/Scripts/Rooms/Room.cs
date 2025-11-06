@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Xml.Serialization;
 using UnityEngine;
 
@@ -5,6 +6,9 @@ public class Room : MonoBehaviour
 {
     [SerializeField] private GameObject NorthDoor, EastDoor, SouthDoor, WestDoor;
     private Room _north, _east, _south, _west;
+
+    public enum RoomType { safe, Treasure, Encounter }
+    public RoomType rType;
 
     public void Start()
     {
@@ -14,6 +18,37 @@ public class Room : MonoBehaviour
     public virtual void EnterRoom()
     {
         Debug.Log("You enter a room.");
+    }
+
+    public string RoomSearch()
+    {
+        GameMaster gm = FindFirstObjectByType<GameMaster>();
+        switch (rType)
+        {
+            case RoomType.safe:
+                Debug.Log("Nothing here.");
+                return "You found nothing here.";
+
+            case RoomType.Treasure:
+                Debug.Log("You spot something");
+                int[] treasureDice = { 4, 6, 8, 20 };
+                System.Random rand = new System.Random();
+                int newDice = treasureDice[rand.Next(treasureDice.Length)];
+                gm.Inventory.Add(newDice);
+                Debug.Log($"You found a d{newDice}!");
+                return "You found something";
+
+            case RoomType.Encounter:
+                Debug.Log("You find a creature of some sort!");
+                //battle start
+                BattleMaster bm = FindFirstObjectByType<BattleMaster>();
+                bm.StartEncounter(gm.Inventory);
+                return "A battle!";
+
+            default:
+                Debug.Log("Nothing here.");
+                return "Nothing here.";
+        }
     }
 
     public void SetRooms(Room roomNorth, Room roomEast, Room roomSouth, Room roomWest)
@@ -28,7 +63,7 @@ public class Room : MonoBehaviour
         _west = roomWest;
         WestDoor.SetActive(_west == null);
     }
-
+    //this doesnt work
     //randomly create doors for the room, if there is a room in that direction, minumum of one door per room
         public void RandomizeDoors()
     {

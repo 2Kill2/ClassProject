@@ -75,4 +75,10 @@ public class GameMaster : MonoBehaviour
         Application.Quit();
     }
 
+    public void SearchRoom()
+    {
+        Room currentRoom = map[playerPos.row, playerPos.col];
+        //Debug.Log(currentRoom.RoomSearch());
+    }
+
 }
