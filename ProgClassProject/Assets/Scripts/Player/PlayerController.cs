@@ -14,6 +14,10 @@ public class PlayerController : MonoBehaviour
     [Header("References")]
     private CharacterController cc;
     private GameMaster gm;
+    public Room room;
+
+    [Header("Rigidbody")]
+    Rigidbody rb;
 
     public (int pprow, int ppcol) playerPos;
 
@@ -22,6 +26,9 @@ public class PlayerController : MonoBehaviour
         playerRigidbody = GetComponent<Rigidbody>();
         gm = FindFirstObjectByType<GameMaster>();
         Cursor.lockState = CursorLockMode.Locked;
+        room = FindFirstObjectByType<Room>();
+        transform.position = new Vector3(room.transform.position.x, transform.position.y, room.transform.position.z);
+        room.EnterRoom();
     }
 
     //let player move forward and backward with , w and s and turnd left and right with a and d
@@ -31,37 +38,59 @@ public class PlayerController : MonoBehaviour
         //movement input
         if (Input.GetKeyDown(KeyCode.W))
         {
-            //make a smooth transition later
-            transform.position += transform.forward * 5;
-            playerPos.pprow += 1;
+                MoveToRoom(room?.north);
         }
         if (Input.GetKeyDown(KeyCode.S))
         {
-            //ditto
-            transform.position -= transform.forward * 5;
-            playerPos.pprow -= 1;
+            MoveToRoom(room?.south);
         }
         if (Input.GetKeyDown(KeyCode.A))
         {
+            //ditto
             transform.Rotate(0, -90, 0);
         }
         if (Input.GetKeyDown(KeyCode.D))
         {
+            //ditto
             transform.Rotate(0, 90, 0);
         }
 
         //add search button
         if (Input.GetKeyDown(KeyCode.F))
         {
-            if (gm != null)
+            if (room != null) 
             {
-                Debug.Log("searching room");
-                gm.SearchRoom();
+                Debug.Log("Searching current room.");
+                room.RoomSearch();
             }
             else
             {
-                Debug.LogWarning("GameMaster not Found! (playercontroller.cs)");
+                Debug.Log("PlayerController.cs room is null");
             }
+
+        }
+    }
+    public void MoveToRoom(Room targetRoom)
+    {
+        if (targetRoom == null)
+        {
+            Debug.LogWarning("Cannot move: target room is null!");
+            return;
+        }
+
+        room = targetRoom;
+        transform.position = new Vector3(targetRoom.transform.position.x, transform.position.y, targetRoom.transform.position.z);
+        targetRoom.EnterRoom();
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Room enteredRoom = other.GetComponent<Room>();
+        if (enteredRoom != null)
+        {
+            room = enteredRoom;
+            Debug.Log($"Entered room: {room.name}, Type {room.rType}");
+            room.EnterRoom();
         }
     }
 

@@ -152,6 +152,7 @@ GameObject:
   - component: {fileID: 7880900065315039237}
   - component: {fileID: 8341355634493895828}
   - component: {fileID: 5392922479847096243}
+  - component: {fileID: 122183231401992485}
   m_Layer: 0
   m_Name: Player 1
   m_TagString: Untagged
@@ -266,3 +267,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerCamera: {fileID: 2116469908731614181}
   moveSpeed: 5
+--- !u!54 &122183231401992485
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9048707235296613144}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0

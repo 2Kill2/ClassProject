@@ -5,10 +5,10 @@ using UnityEngine;
 public class Room : MonoBehaviour
 {
     [SerializeField] private GameObject NorthDoor, EastDoor, SouthDoor, WestDoor;
-    private Room _north, _east, _south, _west;
+    public Room north, east, south, west;
 
     public enum RoomType { safe, Treasure, Encounter }
-    public RoomType rType;
+    [SerializeField] public RoomType rType;
 
     public void Start()
     {
@@ -17,9 +17,14 @@ public class Room : MonoBehaviour
 
     public virtual void EnterRoom()
     {
-        Debug.Log("You enter a room.");
+        Debug.Log($"Entering {name} ({rType})");
     }
 
+    //this doesnt actually change when you move
+    //it is reading every room is .safe
+    //the player position is probably not being called go find where thats dealt and fix it
+
+    //maybe read player position and compare it to what mapmaster spawned in that spot
     public string RoomSearch()
     {
         GameMaster gm = FindFirstObjectByType<GameMaster>();
@@ -31,7 +36,7 @@ public class Room : MonoBehaviour
 
             case RoomType.Treasure:
                 Debug.Log("You spot something");
-                int[] treasureDice = { 4, 6, 8, 20 };
+                int[] treasureDice = { 4, 6, 8, 20 }; //change this to whatever prefab spawns later
                 System.Random rand = new System.Random();
                 int newDice = treasureDice[rand.Next(treasureDice.Length)];
                 gm.Inventory.Add(newDice);
@@ -53,15 +58,14 @@ public class Room : MonoBehaviour
 
     public void SetRooms(Room roomNorth, Room roomEast, Room roomSouth, Room roomWest)
     {
-        // Implementation for setting adjacent rooms can be added here
-        _north = roomNorth;
-        NorthDoor.SetActive(_north == null);
-        _east = roomEast;
-        EastDoor.SetActive(_east == null);
-        _south = roomSouth;
-        SouthDoor.SetActive(_south == null);
-        _west = roomWest;
-        WestDoor.SetActive(_west == null);
+        north = roomNorth;
+        NorthDoor.SetActive(north == null);
+        east = roomEast;
+        EastDoor.SetActive(east == null);
+        south = roomSouth;
+        SouthDoor.SetActive(south == null);
+        west = roomWest;
+        WestDoor.SetActive(west == null);
     }
     //this doesnt work
     //randomly create doors for the room, if there is a room in that direction, minumum of one door per room
@@ -70,7 +74,7 @@ public class Room : MonoBehaviour
         System.Random rng = new System.Random();
         bool doorCreated = false;
         // North Door
-        if (_north != null && rng.Next(0, 2) == 0)
+        if (north != null && rng.Next(0, 2) == 0)
         {
             NorthDoor.SetActive(true);
             doorCreated = true;
@@ -80,7 +84,7 @@ public class Room : MonoBehaviour
             NorthDoor.SetActive(false);
         }
         // East Door
-        if (_east != null && rng.Next(0, 2) == 0)
+        if (east != null && rng.Next(0, 2) == 0)
         {
             EastDoor.SetActive(true);
             doorCreated = true;
@@ -90,7 +94,7 @@ public class Room : MonoBehaviour
             EastDoor.SetActive(false);
         }
         // South Door
-        if (_south != null && rng.Next(0, 2) == 0)
+        if (south != null && rng.Next(0, 2) == 0)
         {
             SouthDoor.SetActive(true);
             doorCreated = true;
@@ -100,7 +104,7 @@ public class Room : MonoBehaviour
             SouthDoor.SetActive(false);
         }
         // West Door
-        if (_west != null && rng.Next(0, 2) == 0)
+        if (west != null && rng.Next(0, 2) == 0)
         {
             WestDoor.SetActive(true);
             doorCreated = true;
@@ -112,10 +116,10 @@ public class Room : MonoBehaviour
         // Ensure at least one door is created
         if (!doorCreated)
         {
-            if (_north != null) NorthDoor.SetActive(true);
-            else if (_east != null) EastDoor.SetActive(true);
-            else if (_south != null) SouthDoor.SetActive(true);
-            else if (_west != null) WestDoor.SetActive(true);
+            if (north != null) NorthDoor.SetActive(true);
+            else if (east != null) EastDoor.SetActive(true);
+            else if (south != null) SouthDoor.SetActive(true);
+            else if (west != null) WestDoor.SetActive(true);
         }
     }
 
