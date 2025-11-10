@@ -1,128 +1,159 @@
-using System.Collections.Generic;
-using System.Xml.Serialization;
 using UnityEngine;
 
 public class Room : MonoBehaviour
 {
-    [SerializeField] private GameObject NorthDoor, EastDoor, SouthDoor, WestDoor;
+    [Header("Doors")]
+    public GameObject NorthDoor, EastDoor, SouthDoor, WestDoor;
+
+    [Header("Neighbors")]
     public Room north, east, south, west;
 
-    GameMaster gm;
-    public enum RoomType { safe, Treasure, Encounter }
-    [SerializeField] public RoomType rType;
+   
+    public enum RoomType { Safe, Treasure, Encounter }
+    public RoomType rType;
 
-    public void Start()
-    {
-        //RandomizeDoors();
-    }
+    private GameMaster gm;
 
+    // Called when player enters the room
     public virtual void EnterRoom()
     {
         Debug.Log($"Entering {name} ({rType})");
     }
 
-    //this doesnt actually change when you move
-    //it is reading every room is .safe
-    //the player position is probably not being called go find where thats dealt and fix it
-
-    //maybe read player position and compare it to what mapmaster spawned in that spot
+    // Perform a search in the room
     public string RoomSearch()
     {
         switch (rType)
         {
-            case RoomType.safe:
+            case RoomType.Safe:
                 Debug.Log("Nothing here.");
                 return "You found nothing here.";
 
             case RoomType.Treasure:
-                Debug.Log("You spot something");
-                int[] treasureDice = { 4, 6, 8, 20 }; //change this to whatever prefab spawns later
-                System.Random rand = new System.Random();
-                int newDice = treasureDice[rand.Next(treasureDice.Length)];
+                Debug.Log("You spot something!");
+                int[] treasureDice = { 4, 6, 8, 20 };
+                int newDice = treasureDice[Random.Range(0, treasureDice.Length)];
                 gm.Inventory.Add(newDice);
                 Debug.Log($"You found a d{newDice}!");
-                return "You found something";
+                return "You found treasure!";
 
             case RoomType.Encounter:
-                Debug.Log("You find a creature of some sort!");
-                //battle start
+                Debug.Log("You find a creature!");
                 BattleMaster bm = FindFirstObjectByType<BattleMaster>();
                 bm.StartEncounter(gm.Inventory);
-                return "A battle!";
+                return "A battle starts!";
 
             default:
-                Debug.Log("Nothing here.");
                 return "Nothing here.";
         }
     }
 
+    // Set neighboring rooms and doors
     public void SetRooms(Room roomNorth, Room roomEast, Room roomSouth, Room roomWest, GameMaster gameMaster)
     {
         gm = gameMaster;
+
         north = roomNorth;
-        NorthDoor.SetActive(north == null);
         east = roomEast;
-        EastDoor.SetActive(east == null);
         south = roomSouth;
-        SouthDoor.SetActive(south == null);
         west = roomWest;
+
+        // DOOR LOGIC:
+        // true = door exists / closed
+        // false = no door / open / walkable
+        NorthDoor.SetActive(north == null);
+        EastDoor.SetActive(east == null);
+        SouthDoor.SetActive(south == null);
         WestDoor.SetActive(west == null);
     }
-    //this doesnt work
-    //randomly create doors for the room, if there is a room in that direction, minumum of one door per room
-        public void RandomizeDoors()
+
+    // Randomly open doors for this room
+    // Border rooms will never open doors that lead outside
+    public void RandomizeDoors(bool isBorderNorth, bool isBorderEast, bool isBorderSouth, bool isBorderWest)
     {
+        bool anyOpen = false;
+
         System.Random rng = new System.Random();
-        bool doorCreated = false;
-        // North Door
-        if (north != null && rng.Next(0, 2) == 0)
+
+        // NORTH
+        if (north != null && !isBorderNorth)
         {
-            NorthDoor.SetActive(true);
-            doorCreated = true;
+            bool open = rng.Next(0, 2) == 0; // 50% chance
+            NorthDoor.SetActive(open);
+            if (north != null) north.SouthDoor.SetActive(open); // sync neighbor
+            anyOpen |= open;
         }
-        else
+        else if (north != null)
         {
             NorthDoor.SetActive(false);
+            north.SouthDoor.SetActive(false);
         }
-        // East Door
-        if (east != null && rng.Next(0, 2) == 0)
+
+        // EAST
+        if (east != null && !isBorderEast)
         {
-            EastDoor.SetActive(true);
-            doorCreated = true;
+            bool open = rng.Next(0, 2) == 0;
+            EastDoor.SetActive(open);
+            if (east != null) east.WestDoor.SetActive(open);
+            anyOpen |= open;
         }
-        else
+        else if (east != null)
         {
             EastDoor.SetActive(false);
+            east.WestDoor.SetActive(false);
         }
-        // South Door
-        if (south != null && rng.Next(0, 2) == 0)
+
+        // SOUTH
+        if (south != null && !isBorderSouth)
         {
-            SouthDoor.SetActive(true);
-            doorCreated = true;
+            bool open = rng.Next(0, 2) == 0;
+            SouthDoor.SetActive(open);
+            if (south != null) south.NorthDoor.SetActive(open);
+            anyOpen |= open;
         }
-        else
+        else if (south != null)
         {
             SouthDoor.SetActive(false);
+            south.NorthDoor.SetActive(false);
         }
-        // West Door
-        if (west != null && rng.Next(0, 2) == 0)
+
+        // WEST
+        if (west != null && !isBorderWest)
         {
-            WestDoor.SetActive(true);
-            doorCreated = true;
+            bool open = rng.Next(0, 2) == 0;
+            WestDoor.SetActive(open);
+            if (west != null) west.EastDoor.SetActive(open);
+            anyOpen |= open;
         }
-        else
+        else if (west != null)
         {
             WestDoor.SetActive(false);
+            west.EastDoor.SetActive(false);
         }
-        // Ensure at least one door is created
-        if (!doorCreated)
+
+        // Ensure at least one door is open (so room isn’t isolated)
+        if (!anyOpen)
         {
-            if (north != null) NorthDoor.SetActive(true);
-            else if (east != null) EastDoor.SetActive(true);
-            else if (south != null) SouthDoor.SetActive(true);
-            else if (west != null) WestDoor.SetActive(true);
+            if (north != null && !isBorderNorth)
+            {
+                NorthDoor.SetActive(true);
+                if (north != null) north.SouthDoor.SetActive(true);
+            }
+            else if (east != null && !isBorderEast)
+            {
+                EastDoor.SetActive(true);
+                if (east != null) east.WestDoor.SetActive(true);
+            }
+            else if (south != null && !isBorderSouth)
+            {
+                SouthDoor.SetActive(true);
+                if (south != null) south.NorthDoor.SetActive(true);
+            }
+            else if (west != null && !isBorderWest)
+            {
+                WestDoor.SetActive(true);
+                if (west != null) west.EastDoor.SetActive(true);
+            }
         }
     }
-
-
 }

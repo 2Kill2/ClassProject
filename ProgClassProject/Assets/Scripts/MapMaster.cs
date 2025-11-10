@@ -1,5 +1,4 @@
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI.Table;
 
 public class MapMaster : MonoBehaviour
 {
@@ -9,60 +8,72 @@ public class MapMaster : MonoBehaviour
     [Header("Settings")]
     [SerializeField] private float RoomSize = 1f;
     [SerializeField] private float RoomSpacing = 0.1f;
-    //[SerializeField] private float Rows = 3f;
-    //[SerializeField] private float cols = 3f;
 
     [Header("References")]
     [SerializeField] private GridSettings _gridSettings = null;
-    public Room[,] roomGrid;
-    [SerializeField] GameMaster gm;
+    [SerializeField] private GameMaster gm;
 
-    private Room room;
-    //create map grid and populate with rooms randomly selected from roomPrefabs
+    public Room[,] roomGrid;
+
+    // Create the map and instantiate rooms
     public void CreateMap()
     {
-        roomGrid = new Room[_gridSettings.GridSizeX, _gridSettings.GridSizeY];
+        int rows = _gridSettings.GridSizeX;
+        int cols = _gridSettings.GridSizeY;
 
-        for (int r = 0; r < _gridSettings.GridSizeX; r++)
+        roomGrid = new Room[rows, cols];
+
+        // Instantiate rooms
+        for (int r = 0; r < rows; r++)
         {
-            for (int c = 0; c < _gridSettings.GridSizeY; c++)
+            for (int c = 0; c < cols; c++)
             {
                 int roll = Random.Range(0, roomPrefabs.Length);
-                room = Instantiate(roomPrefabs[roll], new Vector3(c * (RoomSize + RoomSpacing), 0, r * (RoomSize + RoomSpacing)), Quaternion.identity);
+                Room room = Instantiate(
+                    roomPrefabs[roll],
+                    new Vector3(c * (RoomSize + RoomSpacing), 0, r * (RoomSize + RoomSpacing)),
+                    Quaternion.identity
+                );
                 room.name = $"Room_{r}_{c}";
                 roomGrid[r, c] = room;
             }
         }
+
+        // Set neighbors and doors
         SetRooms();
+        Debug.Log("Map created with randomized rooms and doors.");
     }
-    //unity Z axis is r
-    //unity x axis is c
-    public void SetRooms()
+
+    // Set neighbors for each room and randomize doors
+    private void SetRooms()
     {
-        for (int r = 0; r < _gridSettings.GridSizeX; r++)
+        int rows = _gridSettings.GridSizeX;
+        int cols = _gridSettings.GridSizeY;
+
+        for (int r = 0; r < rows; r++)
         {
-            for (int c = 0; c < _gridSettings.GridSizeY; c++)
+            for (int c = 0; c < cols; c++)
             {
-                var temproom = roomGrid[r, c];
+                Room current = roomGrid[r, c];
 
-                Room n, e, w, s;
-                n = null;
-                e = null;
-                w = null;
-                s = null;
+                // Determine neighbors
+                Room north = (r < rows - 1) ? roomGrid[r + 1, c] : null;
+                Room south = (r > 0) ? roomGrid[r - 1, c] : null;
+                Room east = (c < cols - 1) ? roomGrid[r, c + 1] : null;
+                Room west = (c > 0) ? roomGrid[r, c - 1] : null;
 
-                //r - 1 is south
-                if (r > 0) s = roomGrid[r - 1, c];
-                //r + 1 north
-                if (r < _gridSettings.GridSizeX - 1) n = roomGrid[r + 1, c];
-                //c - 1 west
-                if (c > 0) w = roomGrid[r, c - 1];
-                //c + 1 east
-                if (c < _gridSettings.GridSizeY - 1) e = roomGrid[r, c + 1];
+                // Set neighbors in the room
+                current.SetRooms(north, east, south, west, gm);
 
-                temproom.SetRooms(n, e, w, s, gm);
+                // Determine if this room is on a border
+                bool isBorderNorth = (r == rows - 1);
+                bool isBorderSouth = (r == 0);
+                bool isBorderEast = (c == cols - 1);
+                bool isBorderWest = (c == 0);
+
+                // Randomize doors while respecting borders
+                current.RandomizeDoors(isBorderNorth, isBorderEast, isBorderSouth, isBorderWest);
             }
         }
     }
-
 }

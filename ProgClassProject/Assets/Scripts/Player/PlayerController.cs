@@ -1,109 +1,179 @@
-using Unity.VisualScripting;
 using UnityEngine;
+using System.Collections;
 
 public class PlayerController : MonoBehaviour
 {
     [Header("Prefabs")]
     public Camera playerCamera;
-    private Rigidbody playerRigidbody;
-    public GameObject playerprefab;
+    public GameObject playerPrefab;
 
     [Header("Settings")]
-    public float moveSpeed = 5f;
+    public float moveSpeed = 3f;       // units per second
+    public float rotationSpeed = 360f; // degrees per second
+    private bool isMoving = false;     // prevent input while moving
 
     [Header("References")]
-    private CharacterController cc;
-    private GameMaster gm;
-    public Room room;
+    public Room room; // current room player is in
+    private Vector3 targetPosition;
+    private Quaternion targetRotation;
 
-    [Header("Rigidbody")]
-    Rigidbody rb;
-
-    public (int pprow, int ppcol) playerPos;
+    // Grid-based player tracking
+    public enum Facing { North, East, South, West }
+    public Facing facing = Facing.North;
 
     void Start()
     {
-        playerRigidbody = GetComponent<Rigidbody>();
-        gm = FindFirstObjectByType<GameMaster>();
-        Cursor.lockState = CursorLockMode.Locked;
+        // Start in first room
         room = FindFirstObjectByType<Room>();
         transform.position = new Vector3(room.transform.position.x, transform.position.y, room.transform.position.z);
+        targetPosition = transform.position;
+        targetRotation = transform.rotation;
+
         room.EnterRoom();
     }
 
-    //let player move forward and backward with , w and s and turnd left and right with a and d
-    //player moves on a grid and turns in 90 degree increments
-    private void Update()
+    void Update()
     {
-        //movement input
+        HandleInput();
+        SmoothMoveAndRotate();
+    }
+
+    void HandleInput()
+    {
+        if (isMoving) return; // prevent input during movement
+
+        // Move forward
         if (Input.GetKeyDown(KeyCode.W))
         {
-                MoveToRoom(room?.north);
+            Room nextRoom = GetRoomInFacingDirection();
+            if (nextRoom != null)
+                StartCoroutine(MoveToRoomSmooth(nextRoom));
+            else
+                Debug.Log("A wall blocks the way!");
         }
+
+        // Move backward
         if (Input.GetKeyDown(KeyCode.S))
         {
-            MoveToRoom(room?.south);
+            Room backRoom = GetRoomBehind();
+            if (backRoom != null)
+                StartCoroutine(MoveToRoomSmooth(backRoom));
+            else
+                Debug.Log("A wall blocks the way!");
         }
+
+        // Rotate left
         if (Input.GetKeyDown(KeyCode.A))
         {
-            //ditto
-            transform.Rotate(0, -90, 0);
+            RotateLeft();
         }
+
+        // Rotate right
         if (Input.GetKeyDown(KeyCode.D))
         {
-            //ditto
-            transform.Rotate(0, 90, 0);
+            RotateRight();
         }
 
-        //add search button
+        // Search current room
         if (Input.GetKeyDown(KeyCode.F))
         {
-            if (room != null) 
+            if (room != null)
             {
-                Debug.Log("Searching current room.");
+                Debug.Log("Searching current room...");
                 room.RoomSearch();
             }
-            else
-            {
-                Debug.Log("PlayerController.cs room is null");
-            }
-
         }
     }
-    public void MoveToRoom(Room targetRoom)
-    {
-        if (targetRoom == null)
-        {
-            Debug.LogWarning("Cannot move: target room is null!");
-            return;
-        }
 
+    // Smooth movement and rotation each frame
+    void SmoothMoveAndRotate()
+    {
+        transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+    }
+
+    // Coroutine to move smoothly between rooms
+    private IEnumerator MoveToRoomSmooth(Room targetRoom)
+    {
+        if (targetRoom == null) yield break;
+
+        isMoving = true;
+
+        targetPosition = new Vector3(targetRoom.transform.position.x, transform.position.y, targetRoom.transform.position.z);
+
+        // Wait until we reach the target
+        while (Vector3.Distance(transform.position, targetPosition) > 0.01f)
+            yield return null;
+
+        transform.position = targetPosition;
         room = targetRoom;
-        transform.position = new Vector3(targetRoom.transform.position.x, transform.position.y, targetRoom.transform.position.z);
-        targetRoom.EnterRoom();
+        room.EnterRoom();
+
+        isMoving = false;
     }
 
-    private void OnTriggerEnter(Collider other)
+    // Returns the room the player is facing
+    private Room GetRoomInFacingDirection()
     {
-        Room enteredRoom = other.GetComponent<Room>();
-        if (enteredRoom != null)
+        if (room == null) return null;
+
+        switch (facing)
         {
-            room = enteredRoom;
-            Debug.Log($"Entered room: {room.name}, Type {room.rType}");
-            room.EnterRoom();
+            case Facing.North: return room.north != null && room.NorthDoor.activeSelf ? room.north : null;
+            case Facing.East: return room.east != null && room.EastDoor.activeSelf ? room.east : null;
+            case Facing.South: return room.south != null && room.SouthDoor.activeSelf ? room.south : null;
+            case Facing.West: return room.west != null && room.WestDoor.activeSelf ? room.west : null;
         }
+        return null;
     }
 
-    //instantiate player prefab at start of game
-    public void SpawnPlayer()
+    // Returns the room behind the player
+    private Room GetRoomBehind()
     {
-        playerPos = (1, 1);
-        GameObject newPlayer = Instantiate(playerprefab,
-            new Vector3(playerPos.ppcol * 2, 1, playerPos.pprow * 2),
-            Quaternion.identity);
+        Facing opposite = Facing.North;
+        switch (facing)
+        {
+            case Facing.North: opposite = Facing.South; break;
+            case Facing.East: opposite = Facing.West; break;
+            case Facing.South: opposite = Facing.North; break;
+            case Facing.West: opposite = Facing.East; break;
+        }
+
+        switch (opposite)
+        {
+            case Facing.North: return room.north != null && room.NorthDoor.activeSelf ? room.north : null;
+            case Facing.East: return room.east != null && room.EastDoor.activeSelf ? room.east : null;
+            case Facing.South: return room.south != null && room.SouthDoor.activeSelf ? room.south : null;
+            case Facing.West: return room.west != null && room.WestDoor.activeSelf ? room.west : null;
+        }
+
+        return null;
     }
 
+    // Rotate player 90° left
+    private void RotateLeft()
+    {
+        facing = (Facing)(((int)facing + 3) % 4); // wrap around 0-3
+        targetRotation *= Quaternion.Euler(0, -90, 0);
+    }
 
+    // Rotate player 90° right
+    private void RotateRight()
+    {
+        facing = (Facing)(((int)facing + 1) % 4);
+        targetRotation *= Quaternion.Euler(0, 90, 0);
+    }
 
+    // Optional: spawn player in a given starting room
+    public void SpawnPlayer(Room startingRoom)
+    {
+        if (startingRoom == null) return;
 
+        room = startingRoom;
+        transform.position = new Vector3(room.transform.position.x, transform.position.y, room.transform.position.z);
+        targetPosition = transform.position;
+        targetRotation = transform.rotation;
+
+        room.EnterRoom();
+    }
 }
