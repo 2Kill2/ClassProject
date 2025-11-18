@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour
     [Header("Prefabs")]
     public Camera playerCamera;
     public GameObject playerPrefab;
+    public GameObject menuCanvas;
 
     [Header("Settings")]
     public float moveSpeed = 3f;       // units per second
@@ -36,6 +37,12 @@ public class PlayerController : MonoBehaviour
     {
         HandleInput();
         SmoothMoveAndRotate();
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            //toggle menu
+            menuCanvas.SetActive(!menuCanvas.activeSelf);
+        }
     }
 
     void HandleInput()
