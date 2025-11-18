@@ -89,7 +89,10 @@ public class MapMaster : MonoBehaviour
                 bool isBorderWest = (c == 0);
 
                 // Randomize doors while respecting borders
-                current.RandomizeDoors(isBorderNorth, isBorderEast, isBorderSouth, isBorderWest , srng);
+                Room fromRoom = null;
+                if (r > 0) fromRoom = roomGrid[r - 1, c]; // example: the room to the south
+                current.RandomizeDoors(fromRoom, isBorderNorth, isBorderEast, isBorderSouth, isBorderWest, srng);
+
 
                 if (current.rType == Room.RoomType.Treasure && current.treasure != null)
                 {

@@ -127,6 +127,7 @@ public class Minotaur : MonoBehaviour
                     step = prev;
                     prev = cameFrom[step];
                 }
+                Debug.Log($"Minotaur will move from {currentRoom.name} to {step.name}");
                 return step; // Return the next room to move into
             }
 
@@ -136,6 +137,7 @@ public class Minotaur : MonoBehaviour
                 {
                     queue.Enqueue(neighbor);
                     cameFrom[neighbor] = room; // Track the path
+                    Debug.Log($"Minotaur adding neighbor {neighbor.name} to queue");
                 }
             }
         }

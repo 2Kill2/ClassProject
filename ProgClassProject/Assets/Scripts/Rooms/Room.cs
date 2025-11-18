@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class Room : MonoBehaviour
 {
@@ -73,128 +74,73 @@ public class Room : MonoBehaviour
     }
 
     // Set neighboring rooms and doors
-    public void SetRooms(Room roomNorth, Room roomEast, Room roomSouth, Room roomWest, GameMaster gameMaster)
+  public void SetRooms(Room roomNorth, Room roomEast, Room roomSouth, Room roomWest, GameMaster gameMaster, Room fromRoom = null)
+{
+    gm = gameMaster;
+
+    north = roomNorth;
+    east = roomEast;
+    south = roomSouth;
+    west = roomWest;
+
+    // Close all doors initially
+    NorthDoor.SetActive(true);
+    EastDoor.SetActive(true);
+    SouthDoor.SetActive(true);
+    WestDoor.SetActive(true);
+
+    // Open doors for neighbors that exist
+    if (north != null && north != fromRoom) NorthDoor.SetActive(true);
+    if (east != null && east != fromRoom) EastDoor.SetActive(true);
+    if (south != null && south != fromRoom) SouthDoor.SetActive(true);
+    if (west != null && west != fromRoom) WestDoor.SetActive(true);
+
+    // Randomize doors while ensuring back + forward path
+    RandomizeDoors(fromRoom, north == null, east == null, south == null, west == null, new System.Random()); // pass your seed-based random here if you want determinism
+}
+
+// Randomly open doors while ensuring at least two accessible doors
+// 'fromRoom' is the room we came from (to guarantee a back path)
+public void RandomizeDoors(Room fromRoom, bool isBorderNorth, bool isBorderEast, bool isBorderSouth, bool isBorderWest, System.Random srng)
+{
+    // Start with all doors closed
+    NorthDoor.SetActive(true);
+    EastDoor.SetActive(true);
+    SouthDoor.SetActive(true);
+    WestDoor.SetActive(true);
+
+    // 1. Keep the door back to the previous room open
+    if (fromRoom != null)
     {
-        gm = gameMaster;
-
-        north = roomNorth;
-        east = roomEast;
-        south = roomSouth;
-        west = roomWest;
-
-        // DOOR LOGIC:
-        // true = door exists / closed
-        // false = no door / open / walkable
-        NorthDoor.SetActive(north == null);
-        EastDoor.SetActive(east == null);
-        SouthDoor.SetActive(south == null);
-        WestDoor.SetActive(west == null);
+        if (fromRoom == north) { NorthDoor.SetActive(false); north.SouthDoor.SetActive(false); }
+        else if (fromRoom == east) { EastDoor.SetActive(false); east.WestDoor.SetActive(false); }
+        else if (fromRoom == south) { SouthDoor.SetActive(false); south.NorthDoor.SetActive(false); }
+        else if (fromRoom == west) { WestDoor.SetActive(false); west.EastDoor.SetActive(false); }
     }
 
-    // Randomly open doors for this room
-    // Border rooms will never open doors that lead outside
-    public void RandomizeDoors(bool isBorderNorth, bool isBorderEast, bool isBorderSouth, bool isBorderWest, System.Random srng)
+    // 2. Collect candidate doors leading to new rooms
+    List<(Room, GameObject)> candidates = new List<(Room, GameObject)>();
+    if (north != null && north != fromRoom && !isBorderNorth) candidates.Add((north, NorthDoor));
+    if (east != null && east != fromRoom && !isBorderEast) candidates.Add((east, EastDoor));
+    if (south != null && south != fromRoom && !isBorderSouth) candidates.Add((south, SouthDoor));
+    if (west != null && west != fromRoom && !isBorderWest) candidates.Add((west, WestDoor));
+
+    // 3. Guarantee at least one forward door
+    if (candidates.Count > 0)
     {
-        bool anyOpen = false;
-
-        System.Random rng = new System.Random();
-
-        // NORTH
-        if (north != null)
-        {
-            if (isBorderNorth)
-            {
-                NorthDoor.SetActive(true);
-                north.SouthDoor.SetActive(true);
-            }
-            else
-            {
-                bool open = rng.Next(0, 2) == 0;
-                NorthDoor.SetActive(!open); //open means not active
-                north.SouthDoor.SetActive(!open);
-                anyOpen |= open;
-            }
-        }
-        else if (north != null)
-        {
-            NorthDoor.SetActive(false);
-            north.SouthDoor.SetActive(false);
-        }
-
-        // EAST
-         if (east != null)
-    {
-        if (isBorderEast)
-        {
-            EastDoor.SetActive(true);
-            east.WestDoor.SetActive(true);
-        }
-        else
-        {
-            bool open = rng.Next(0, 2) == 0;
-            EastDoor.SetActive(!open);
-            east.WestDoor.SetActive(!open);
-            anyOpen |= open;
-        }
+        var chosen = candidates[srng.Next(0, candidates.Count)];
+        chosen.Item2.SetActive(false); // open
+        candidates.Remove(chosen); // remove from candidates so optional openings don't double-count
     }
 
-        // SOUTH
-          if (south != null)
+    // 4. open other doors for branching
+    foreach (var c in candidates)
     {
-        if (isBorderSouth)
+        if (srng.NextDouble() < 0.17) // 17% chance
         {
-            SouthDoor.SetActive(true);
-            south.NorthDoor.SetActive(true);
-        }
-        else
-        {
-            bool open = rng.Next(0, 2) == 0;
-            SouthDoor.SetActive(!open);
-            south.NorthDoor.SetActive(!open);
-            anyOpen |= open;
+            c.Item2.SetActive(false);
         }
     }
+}
 
-        // WEST
-          if (west != null)
-    {
-        if (isBorderWest)
-        {
-            WestDoor.SetActive(true);
-            west.EastDoor.SetActive(true);
-        }
-        else
-        {
-            bool open = rng.Next(0, 2) == 0;
-            WestDoor.SetActive(!open);
-            west.EastDoor.SetActive(!open);
-            anyOpen |= open;
-        }
-    }
-
-        // Ensure at least one door is open (so room isn�t isolated)
-       if (!anyOpen)
-    {
-        if (north != null && !isBorderNorth)
-        {
-            NorthDoor.SetActive(false);        // open
-            north.SouthDoor.SetActive(false);
-        }
-        else if (east != null && !isBorderEast)
-        {
-            EastDoor.SetActive(false);
-            east.WestDoor.SetActive(false);
-        }
-        else if (south != null && !isBorderSouth)
-        {
-            SouthDoor.SetActive(false);
-            south.NorthDoor.SetActive(false);
-        }
-        else if (west != null && !isBorderWest)
-        {
-            WestDoor.SetActive(false);
-            west.EastDoor.SetActive(false);
-        }
-        }
-    }
 }
