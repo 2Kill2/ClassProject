@@ -1,4 +1,3 @@
-using UnityEditor.Build;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "GridSettings", menuName = "Scriptable Objects/GridSettings")]

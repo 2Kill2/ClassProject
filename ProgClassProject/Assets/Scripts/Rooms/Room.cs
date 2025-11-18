@@ -20,6 +20,7 @@ public class Room : MonoBehaviour
     public bool CanMoveSouth => !SouthDoor.activeSelf && south != null;
     public bool CanMoveWest => !WestDoor.activeSelf && west != null;
 
+    string resultMessage = "";
     void Start()
     {
         treasure = GetComponent<TreasureRoom>();
@@ -37,29 +38,38 @@ public class Room : MonoBehaviour
         switch (rType)
         {
             case RoomType.Safe:
-                Debug.Log("Nothing here.");
-                return "You found nothing here.";
+                resultMessage = "The room is empty and safe.";
+                gm.ShowMessage(resultMessage, 3f, 1f);
+                break;
 
             case RoomType.Treasure:
                 if (treasure != null)
                 {
-                    return treasure.SearchTreasure();
+                    resultMessage = treasure.SearchTreasure();
+                    if(gm != null && gm.NotificationText != null)
+                    {
+                        gm.ShowMessage(resultMessage, 3f, 1f); // message, display time, fade time
+                    }
                 }
                 else
                 {
-                    Debug.Log("No treasure component found!");
-                    return "Error: No treasure found.";
+                    resultMessage = "No treasure found.";
+                    gm.ShowMessage(resultMessage, 3f, 1f);
                 }
+                break;
 
             case RoomType.Encounter:
-                Debug.Log("You find a creature!");
                 BattleMaster bm = FindFirstObjectByType<BattleMaster>();
                 bm.StartEncounter(gm.Inventory);
-                return "A battle starts!";
+                resultMessage = "An encounter has started!";
+                break;
 
             default:
-                return "Nothing here.";
+                resultMessage = "Nothing here.";
+                break;
         }
+        Debug.Log(resultMessage);
+        return resultMessage;
     }
 
     // Set neighboring rooms and doors

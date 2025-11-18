@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections;
+using NUnit.Framework;
+using Unity.VisualScripting;
 
 public class PlayerController : MonoBehaviour
 {
@@ -17,7 +19,10 @@ public class PlayerController : MonoBehaviour
     public Room room; // current room player is in
     private Vector3 targetPosition;
     private Quaternion targetRotation;
-
+    public GameMaster GameMaster;
+    public delegate void OnPlayerMove();
+    public event OnPlayerMove PlayerMoved;
+public GameObject inventoryPanel;
     // Grid-based player tracking
     public enum Facing { North, East, South, West }
     public Facing facing = Facing.North;
@@ -40,9 +45,15 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            //toggle menu
-            menuCanvas.SetActive(!menuCanvas.activeSelf);
-        }
+            bool isActive = !menuCanvas.activeSelf;
+            menuCanvas.SetActive(isActive);
+
+            if (inventoryPanel != null)
+            inventoryPanel.SetActive(isActive);
+
+            if (isActive && GameMaster != null)
+            GameMaster.UpdateInventoryList();
+        }     
     }
 
     void HandleInput()
@@ -86,7 +97,6 @@ public class PlayerController : MonoBehaviour
         {
             if (room != null)
             {
-                Debug.Log("Searching current room...");
                 room.RoomSearch();
             }
         }
@@ -117,6 +127,9 @@ public class PlayerController : MonoBehaviour
         room.EnterRoom();
 
         isMoving = false;
+
+        //notify minotaur
+        PlayerMoved?.Invoke();
     }
     //Door active = WALL CLOSED
     //door inactive = OPEN PATH
