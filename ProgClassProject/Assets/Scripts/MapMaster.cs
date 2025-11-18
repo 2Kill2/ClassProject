@@ -13,11 +13,28 @@ public class MapMaster : MonoBehaviour
     [SerializeField] private GridSettings _gridSettings = null;
     [SerializeField] private GameMaster gm;
 
+    [Header("Map Data")]
+    public int seed = 0; // 0 means random seed
+    [SerializeField] TMPro.TextMeshProUGUI seedText;
+    private System.Random srng;
     public Room[,] roomGrid;
 
     // Create the map and instantiate rooms
     public void CreateMap()
     {
+        if (GlobalSettings.MapSeed != 0)
+        seed = GlobalSettings.MapSeed;
+
+    if (seed == 0)
+        seed = Random.Range(1, int.MaxValue);
+
+    srng = new System.Random(seed);
+
+    Debug.Log($"Map Seed: {seed}");
+    if (seedText != null)
+        seedText.text = $"Seed: {seed}";
+
+
         int rows = _gridSettings.GridSizeX;
         int cols = _gridSettings.GridSizeY;
 
@@ -28,7 +45,7 @@ public class MapMaster : MonoBehaviour
         {
             for (int c = 0; c < cols; c++)
             {
-                int roll = Random.Range(0, roomPrefabs.Length);
+                int roll = srng.Next(0, roomPrefabs.Length);
                 Room room = Instantiate(
                     roomPrefabs[roll],
                     new Vector3(c * (RoomSize + RoomSpacing), 0, r * (RoomSize + RoomSpacing)),
@@ -72,7 +89,16 @@ public class MapMaster : MonoBehaviour
                 bool isBorderWest = (c == 0);
 
                 // Randomize doors while respecting borders
-                current.RandomizeDoors(isBorderNorth, isBorderEast, isBorderSouth, isBorderWest);
+                current.RandomizeDoors(isBorderNorth, isBorderEast, isBorderSouth, isBorderWest , srng);
+
+                if (current.rType == Room.RoomType.Treasure && current.treasure != null)
+                {
+                    TreasureRoom treasureComp = current.treasure;
+                    if (treasureComp != null)
+                    {
+                        treasureComp.Initialize(srng.Next());
+                    }
+                }
             }
         }
     }

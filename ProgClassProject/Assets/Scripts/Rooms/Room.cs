@@ -83,7 +83,7 @@ public class Room : MonoBehaviour
 
     // Randomly open doors for this room
     // Border rooms will never open doors that lead outside
-    public void RandomizeDoors(bool isBorderNorth, bool isBorderEast, bool isBorderSouth, bool isBorderWest)
+    public void RandomizeDoors(bool isBorderNorth, bool isBorderEast, bool isBorderSouth, bool isBorderWest, System.Random srng)
     {
         bool anyOpen = false;
 

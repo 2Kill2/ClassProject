@@ -11,6 +11,13 @@ public class TreasureRoom : MonoBehaviour
 
     private string treasureName;
 
+    private System.Random srng;
+
+    public void Initialize(int seed)
+    {
+        srng = new System.Random(seed);
+    }
+
     //called when player searches room
     public string SearchTreasure()
     {
@@ -23,7 +30,7 @@ public class TreasureRoom : MonoBehaviour
         collected = true;
 
         //pick random treasure
-        int index = Random.Range(0, treasurePrefabs.Length);
+        int index = srng.Next(0, treasurePrefabs.Length);
         GameObject treasure = treasurePrefabs[index];
         treasureName = treasure.name;
 
