@@ -11,8 +11,19 @@ public class Room : MonoBehaviour
    
     public enum RoomType { Safe, Treasure, Encounter }
     public RoomType rType;
+    public TreasureRoom treasure;
 
     private GameMaster gm;
+
+    public bool CanMoveNorth => !NorthDoor.activeSelf && north != null;
+    public bool CanMoveEast => !EastDoor.activeSelf && east != null;
+    public bool CanMoveSouth => !SouthDoor.activeSelf && south != null;
+    public bool CanMoveWest => !WestDoor.activeSelf && west != null;
+
+    void Start()
+    {
+        treasure = GetComponent<TreasureRoom>();
+    }
 
     // Called when player enters the room
     public virtual void EnterRoom()
@@ -30,12 +41,15 @@ public class Room : MonoBehaviour
                 return "You found nothing here.";
 
             case RoomType.Treasure:
-                Debug.Log("You spot something!");
-                int[] treasureDice = { 4, 6, 8, 20 };
-                int newDice = treasureDice[Random.Range(0, treasureDice.Length)];
-                gm.Inventory.Add(newDice);
-                Debug.Log($"You found a d{newDice}!");
-                return "You found treasure!";
+                if (treasure != null)
+                {
+                    return treasure.SearchTreasure();
+                }
+                else
+                {
+                    Debug.Log("No treasure component found!");
+                    return "Error: No treasure found.";
+                }
 
             case RoomType.Encounter:
                 Debug.Log("You find a creature!");
@@ -76,12 +90,20 @@ public class Room : MonoBehaviour
         System.Random rng = new System.Random();
 
         // NORTH
-        if (north != null && !isBorderNorth)
+        if (north != null)
         {
-            bool open = rng.Next(0, 2) == 0; // 50% chance
-            NorthDoor.SetActive(open);
-            if (north != null) north.SouthDoor.SetActive(open); // sync neighbor
-            anyOpen |= open;
+            if (isBorderNorth)
+            {
+                NorthDoor.SetActive(true);
+                north.SouthDoor.SetActive(true);
+            }
+            else
+            {
+                bool open = rng.Next(0, 2) == 0;
+                NorthDoor.SetActive(!open); //open means not active
+                north.SouthDoor.SetActive(!open);
+                anyOpen |= open;
+            }
         }
         else if (north != null)
         {
@@ -90,70 +112,79 @@ public class Room : MonoBehaviour
         }
 
         // EAST
-        if (east != null && !isBorderEast)
+         if (east != null)
+    {
+        if (isBorderEast)
+        {
+            EastDoor.SetActive(true);
+            east.WestDoor.SetActive(true);
+        }
+        else
         {
             bool open = rng.Next(0, 2) == 0;
-            EastDoor.SetActive(open);
-            if (east != null) east.WestDoor.SetActive(open);
+            EastDoor.SetActive(!open);
+            east.WestDoor.SetActive(!open);
             anyOpen |= open;
         }
-        else if (east != null)
+    }
+
+        // SOUTH
+          if (south != null)
+    {
+        if (isBorderSouth)
+        {
+            SouthDoor.SetActive(true);
+            south.NorthDoor.SetActive(true);
+        }
+        else
+        {
+            bool open = rng.Next(0, 2) == 0;
+            SouthDoor.SetActive(!open);
+            south.NorthDoor.SetActive(!open);
+            anyOpen |= open;
+        }
+    }
+
+        // WEST
+          if (west != null)
+    {
+        if (isBorderWest)
+        {
+            WestDoor.SetActive(true);
+            west.EastDoor.SetActive(true);
+        }
+        else
+        {
+            bool open = rng.Next(0, 2) == 0;
+            WestDoor.SetActive(!open);
+            west.EastDoor.SetActive(!open);
+            anyOpen |= open;
+        }
+    }
+
+        // Ensure at least one door is open (so room isnï¿½t isolated)
+       if (!anyOpen)
+    {
+        if (north != null && !isBorderNorth)
+        {
+            NorthDoor.SetActive(false);        // open
+            north.SouthDoor.SetActive(false);
+        }
+        else if (east != null && !isBorderEast)
         {
             EastDoor.SetActive(false);
             east.WestDoor.SetActive(false);
         }
-
-        // SOUTH
-        if (south != null && !isBorderSouth)
-        {
-            bool open = rng.Next(0, 2) == 0;
-            SouthDoor.SetActive(open);
-            if (south != null) south.NorthDoor.SetActive(open);
-            anyOpen |= open;
-        }
-        else if (south != null)
+        else if (south != null && !isBorderSouth)
         {
             SouthDoor.SetActive(false);
             south.NorthDoor.SetActive(false);
         }
-
-        // WEST
-        if (west != null && !isBorderWest)
-        {
-            bool open = rng.Next(0, 2) == 0;
-            WestDoor.SetActive(open);
-            if (west != null) west.EastDoor.SetActive(open);
-            anyOpen |= open;
-        }
-        else if (west != null)
+        else if (west != null && !isBorderWest)
         {
             WestDoor.SetActive(false);
             west.EastDoor.SetActive(false);
         }
-
-        // Ensure at least one door is open (so room isn’t isolated)
-        if (!anyOpen)
-        {
-            if (north != null && !isBorderNorth)
-            {
-                NorthDoor.SetActive(true);
-                if (north != null) north.SouthDoor.SetActive(true);
-            }
-            else if (east != null && !isBorderEast)
-            {
-                EastDoor.SetActive(true);
-                if (east != null) east.WestDoor.SetActive(true);
-            }
-            else if (south != null && !isBorderSouth)
-            {
-                SouthDoor.SetActive(true);
-                if (south != null) south.NorthDoor.SetActive(true);
-            }
-            else if (west != null && !isBorderWest)
-            {
-                WestDoor.SetActive(true);
-                if (west != null) west.EastDoor.SetActive(true);
-            }
         }
     }
 }

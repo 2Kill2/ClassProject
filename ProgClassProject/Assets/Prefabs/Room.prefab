@@ -288,10 +288,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d1c70e4a42fdb54dac1a6d0be8c92a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NorthDoor: {fileID: 5925914153002745683}
-  EastDoor: {fileID: 4078973598157076089}
-  SouthDoor: {fileID: 994904621254249050}
-  WestDoor: {fileID: 3404072241446418083}
+  NorthDoor: {fileID: 3404072241446418083}
+  EastDoor: {fileID: 5925914153002745683}
+  SouthDoor: {fileID: 4078973598157076089}
+  WestDoor: {fileID: 994904621254249050}
   north: {fileID: 0}
   east: {fileID: 0}
   south: {fileID: 0}

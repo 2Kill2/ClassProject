@@ -118,7 +118,8 @@ public class PlayerController : MonoBehaviour
 
         isMoving = false;
     }
-
+    //Door active = WALL CLOSED
+    //door inactive = OPEN PATH
     // Returns the room the player is facing
     private Room GetRoomInFacingDirection()
     {
@@ -126,10 +127,10 @@ public class PlayerController : MonoBehaviour
 
         switch (facing)
         {
-            case Facing.North: return room.north != null && room.NorthDoor.activeSelf ? room.north : null;
-            case Facing.East: return room.east != null && room.EastDoor.activeSelf ? room.east : null;
-            case Facing.South: return room.south != null && room.SouthDoor.activeSelf ? room.south : null;
-            case Facing.West: return room.west != null && room.WestDoor.activeSelf ? room.west : null;
+            case Facing.North: return room.north != null && !room.NorthDoor.activeSelf ? room.north : null;
+            case Facing.East: return room.east != null && !room.EastDoor.activeSelf ? room.east : null;
+            case Facing.South: return room.south != null && !room.SouthDoor.activeSelf ? room.south : null;
+            case Facing.West: return room.west != null && !room.WestDoor.activeSelf ? room.west : null;
         }
         return null;
     }
@@ -148,23 +149,23 @@ public class PlayerController : MonoBehaviour
 
         switch (opposite)
         {
-            case Facing.North: return room.north != null && room.NorthDoor.activeSelf ? room.north : null;
-            case Facing.East: return room.east != null && room.EastDoor.activeSelf ? room.east : null;
-            case Facing.South: return room.south != null && room.SouthDoor.activeSelf ? room.south : null;
-            case Facing.West: return room.west != null && room.WestDoor.activeSelf ? room.west : null;
+            case Facing.North: return room.north != null && !room.NorthDoor.activeSelf ? room.north : null;
+            case Facing.East: return room.east != null && !room.EastDoor.activeSelf ? room.east : null;
+            case Facing.South: return room.south != null && !room.SouthDoor.activeSelf ? room.south : null;
+            case Facing.West: return room.west != null && !room.WestDoor.activeSelf ? room.west : null;
         }
 
         return null;
     }
 
-    // Rotate player 90° left
+    // Rotate player 90ï¿½ left
     private void RotateLeft()
     {
         facing = (Facing)(((int)facing + 3) % 4); // wrap around 0-3
         targetRotation *= Quaternion.Euler(0, -90, 0);
     }
 
-    // Rotate player 90° right
+    // Rotate player 90ï¿½ right
     private void RotateRight()
     {
         facing = (Facing)(((int)facing + 1) % 4);
