@@ -61,7 +61,7 @@ public class Room : MonoBehaviour
 
             case RoomType.Encounter:
                 BattleMaster bm = FindFirstObjectByType<BattleMaster>();
-                bm.StartEncounter(gm.Inventory);
+                //bm.StartEncounter(gm.Inventory);
                 resultMessage = "An encounter has started!";
                 break;
 

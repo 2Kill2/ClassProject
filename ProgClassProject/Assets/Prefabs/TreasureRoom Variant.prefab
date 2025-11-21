@@ -209,12 +209,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 101e8baf12e2b714ab7d145396150640, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  treasurePrefabs:
-  - {fileID: 756050491053060411, guid: f6f3d14926eb99a4f973253f97ab51bb, type: 3}
-  - {fileID: 3007017914804541907, guid: fc54c78edabafed409cf76fbaf6665cd, type: 3}
-  - {fileID: 919132149155446097, guid: ff87b8881186841428122e9871d8e41b, type: 3}
-  - {fileID: 919132149155446097, guid: dd577e0bf021f4da1a39b3ceaa23f5be, type: 3}
   spawnPoint: {fileID: 3749340181281413401}
+  possibleLoot:
+  - {fileID: 11400000, guid: 910d5a6548a3f2342b0a29a494a791dd, type: 2}
+  - {fileID: 11400000, guid: 1d45319b343524a428c814e83b3142ee, type: 2}
+  - {fileID: 11400000, guid: 7e71a93831d036044a0053cb4d726c49, type: 2}
+  - {fileID: 11400000, guid: ac56085e347db054c9ccc9a9e1f84949, type: 2}
+  - {fileID: 11400000, guid: 0937359b9d9460d41a652da6c0da4581, type: 2}
 --- !u!4 &3749340181281413401 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7967601103684481623, guid: d2c13904c1e59964e87c95240edd3385, type: 3}

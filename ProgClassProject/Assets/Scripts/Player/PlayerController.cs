@@ -50,9 +50,6 @@ public GameObject inventoryPanel;
 
             if (inventoryPanel != null)
             inventoryPanel.SetActive(isActive);
-
-            if (isActive && GameMaster != null)
-            GameMaster.UpdateInventoryList();
         }     
     }
 

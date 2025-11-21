@@ -99,7 +99,7 @@ public class MapMaster : MonoBehaviour
                     TreasureRoom treasureComp = current.treasure;
                     if (treasureComp != null)
                     {
-                        treasureComp.Initialize(srng.Next());
+                        treasureComp.Initialize(srng.Next(), gm);
                     }
                 }
             }

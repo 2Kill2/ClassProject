@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Xml.Serialization;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameMaster : MonoBehaviour
 {
@@ -26,15 +27,13 @@ public class GameMaster : MonoBehaviour
     [Header("UI Elements")]
     public TMP_Text NotificationText;
     private Coroutine notifCoroutine;
-    public List<string> InventoryItems = new List<string>();
-    public Transform inventoryContent;
-    public GameObject inventoryItemPrefab;
 
     [Header("References")]
     public MapMaster mapMaster;
     private Room roomMaster;
     public BattleMaster battleMaster;
     public PlayerController pc;
+    public BackPackUI backpackUI;
 
     //bool roomSearched = false;
     private (int row, int col) playerPos;
@@ -49,24 +48,10 @@ public class GameMaster : MonoBehaviour
     {
     }
 
-    //controls
-    public List<int> Inventory { get; set; } = new List<int>();
     
-    public void UpdateInventoryUI()
-    {
-        if (Inventory.Count == 0)
-        {
-            NotificationText.text = "Inventory: Empty";
-        }
-        else
-        {
-            NotificationText.text = "Inventory:";
-            foreach (int d in Inventory)
-            {
-                NotificationText.text += " " + d.ToString();
-            }
-        }
-    }
+    public List<ItemData> Inventory { get; set; } = new List<ItemData>();
+    
+
 
     public void ShowMessage(string message, float displayTime = 2f, float fadeTime = 1f)
     {
@@ -95,33 +80,29 @@ public class GameMaster : MonoBehaviour
         notifCoroutine = null;
     }
 
-    public void AddItem(string itemName)
+    public void AddItem(ItemData item)
     {
-        InventoryItems.Add(itemName);
-        Debug.Log($"Added {itemName} to inventory.");
-    }
-    public void UpdateInventoryList()
-    {
-        if (inventoryContent == null || inventoryItemPrefab == null) return;
-
-        // Clear previous UI entries
-        foreach (Transform child in inventoryContent)
+        if (item == null)
         {
-            Destroy(child.gameObject);
+            Debug.LogError("Cannot add null item to inventory!");
+            return;
         }
 
-        // Populate UI with all items
-        foreach (string itemName in InventoryItems)
+        Inventory.Add(item);
+        Debug.Log($"Added {item.itemName} ({item.dmg} dmg) to inventory.");
+
+        // Update Backpack UI
+        if (backpackUI != null)
         {
-            GameObject itemEntry = Instantiate(inventoryItemPrefab, inventoryContent);
-            TMP_Text textComponent = itemEntry.GetComponentInChildren<TMP_Text>();
-            if (textComponent != null)
-            {
-                textComponent.text = itemName;
-            } 
+            backpackUI.items = Inventory;
+            backpackUI.PopulateBackpack();
+        }
+        else
+        {
+            Debug.LogWarning("BackpackUI reference is missing in GameMaster!");
         }
     }
-
+   
     public void QuitGame()
     {
         Debug.Log("Quitting game...");
