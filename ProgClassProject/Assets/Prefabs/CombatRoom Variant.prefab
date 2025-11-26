@@ -76,6 +76,10 @@ PrefabInstance:
       propertyPath: rType
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 3983415127980419982, guid: d2c13904c1e59964e87c95240edd3385, type: 3}
+      propertyPath: treasure
+      value: 
+      objectReference: {fileID: -3333390948765178422, guid: d41100606f601c94facd1387691f35df, type: 3}
     - target: {fileID: 5061760751976075904, guid: d2c13904c1e59964e87c95240edd3385, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 

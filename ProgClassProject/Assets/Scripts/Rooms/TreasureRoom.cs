@@ -9,6 +9,8 @@ public class TreasureRoom : MonoBehaviour
     private System.Random srng;
     private GameMaster gm;
     public ItemData[] possibleLoot;
+    public ItemData treasureItem;
+    
 
     public void Initialize(int seed, GameMaster gameMaster)
     {
@@ -43,9 +45,10 @@ public class TreasureRoom : MonoBehaviour
 
         if (gm != null)
         {
+            InventoryUIManager.Instance.AddItemToInventory(loot);
             gm.AddItem(loot);
             gm.ShowMessage($"You found a {treasureName}, {loot.dmg} dmg!");
         }
-        return "gm seems null";
+        return $"You found a {treasureName}, {loot.dmg} dmg!";
     }
 }

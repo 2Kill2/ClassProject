@@ -7,21 +7,26 @@ using UnityEngine.UI;
 
 public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
+    public UnityEngine.UI.Image image;
     public ItemData itemData;
     private Transform originalParent;
+    [HideInInspector] public Transform ParentAfterDrag;
     private Canvas canvas;
-    private CanvasGroup canvasGroup;
 
-    private void Awake()
+    void Awake()
     {
-        canvas = GetComponentInParent<Canvas>();
-        canvasGroup = GetComponent<CanvasGroup>();
-        if (canvasGroup == null)
+        if (image == null)
         {
-            canvasGroup = gameObject.AddComponent<CanvasGroup>();
+            image = GetComponent<UnityEngine.UI.Image>();
+        }
+
+        canvas = GetComponentInParent<Canvas>();
+
+        if (canvas == null)
+        {
+            Debug.LogError("DraggableItem must be a child of a Canvas.");
         }
     }
-
     public void Iniitialize(ItemData data)
     {
         itemData = data;
@@ -36,17 +41,18 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     {
         originalParent = transform.parent;
         transform.SetParent(canvas.transform);
-        canvasGroup.blocksRaycasts = false;
+        transform.SetAsLastSibling();
+        image.raycastTarget = false;
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        transform.position = eventData.position;
+        transform.position = Input.mousePosition;
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        transform.SetParent(originalParent);
-        canvasGroup.blocksRaycasts = true;
+        transform.SetParent(ParentAfterDrag);
+        image.raycastTarget = true;
     }
 }

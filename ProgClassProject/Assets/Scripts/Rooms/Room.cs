@@ -13,6 +13,7 @@ public class Room : MonoBehaviour
     public enum RoomType { Safe, Treasure, Encounter }
     public RoomType rType;
     public TreasureRoom treasure;
+    [SerializeField] private EncounterRoom encounter;
 
     private GameMaster gm;
 
@@ -25,6 +26,7 @@ public class Room : MonoBehaviour
     void Start()
     {
         treasure = GetComponent<TreasureRoom>();
+        encounter = GetComponent<EncounterRoom>();
     }
 
     // Called when player enters the room
@@ -60,9 +62,15 @@ public class Room : MonoBehaviour
                 break;
 
             case RoomType.Encounter:
-                BattleMaster bm = FindFirstObjectByType<BattleMaster>();
-                //bm.StartEncounter(gm.Inventory);
-                resultMessage = "An encounter has started!";
+                if(encounter != null)
+                {
+                    resultMessage = encounter.SearchEncounter();
+                }
+                else
+                {
+                    resultMessage = "No encounter found.";
+                    gm?.ShowMessage(resultMessage, 3f, 1f);
+                }
                 break;
 
             default:
