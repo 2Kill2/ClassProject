@@ -1,5 +1,4 @@
 using JetBrains.Annotations;
-using Microsoft.Unity.VisualStudio.Editor;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;

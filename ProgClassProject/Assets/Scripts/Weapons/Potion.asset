@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Potion
   m_EditorClassIdentifier: 
   itemName: Potion
-  dmg: -50
+  dmg: 50
   itemPrefab: {fileID: 4326606609469318620, guid: 9a2b459b1a7a1fb48a48ee0b5db15542, type: 3}
   icon: {fileID: 21300000, guid: 1cf975a2a3b8a7a44adb5bab5c061439, type: 3}
+  itemType: 1

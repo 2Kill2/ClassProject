@@ -2,9 +2,14 @@ using UnityEngine;
 
 public class EncounterRoom : MonoBehaviour
 {
+    private GameMaster gm;
     private System.Random srng;
     private bool encountered = false;
 
+    void Awake()
+    {
+        gm = FindAnyObjectByType<GameMaster>();
+    }
     public void Initialize(int seed, GameMaster gameMaster)
     {
         srng = new System.Random(seed);
@@ -14,6 +19,7 @@ public class EncounterRoom : MonoBehaviour
     {
         if (encountered)
         {
+            gm.ShowMessage("You already fought in this room");
             Debug.Log("The encounter has already been completed.");
             return "The encounter has already been completed.";
         }
@@ -22,6 +28,7 @@ public class EncounterRoom : MonoBehaviour
 
         if (CombatMaster.Instance != null)
         {
+            gm.ShowMessage("Encounter started!");
             CombatMaster.Instance.StartEncounter();
             Debug.Log("Encounter started!");
         }
@@ -29,7 +36,7 @@ public class EncounterRoom : MonoBehaviour
         {
             Debug.LogError("CombatMaster instance not found!");
         }
-        
+
         return "An encounter has begun!";
     }
 }

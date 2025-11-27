@@ -102,6 +102,11 @@ public class MapMaster : MonoBehaviour
                         treasureComp.Initialize(srng.Next(), gm);
                     }
                 }
+                
+                if (current.rType == Room.RoomType.Encounter && current.encounter != null)
+                {
+                    current.encounter.Initialize(srng.Next(), gm);
+                }
             }
         }
     }

@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using NUnit.Framework;
+using UnityEngine.AI;
 
 public class CombatMaster : MonoBehaviour
 {
@@ -23,6 +24,10 @@ public class CombatMaster : MonoBehaviour
 
     private int turnCounter = 0;
     private bool isPlayerTurn;
+
+    [Header("Game Over Screen")]
+    public GameObject GameOverPanel;
+
 
     private List<ItemData> playerInventory;
     private System.Random srng;
@@ -49,11 +54,16 @@ public class CombatMaster : MonoBehaviour
 
     public void StartEncounter()
     {
+        MusicMaster.Instance.PlayCombatMusic();
+
         playerInventory = FindFirstObjectByType<GameMaster>().Inventory;
         playerHP = playerHealth;
         enemyHP = enemyHealth;
         turnCounter = 1;
         isPlayerTurn = true;
+        
+         attackButton.interactable = true;
+        fleeButton.interactable = true;
 
         combatPanel.SetActive(true);
         UpdateUI();
@@ -72,28 +82,45 @@ public class CombatMaster : MonoBehaviour
 
     int die1 = srng.Next(1, 7);
     int die2 = srng.Next(1, 7);
-    int itemBonus = 0;
+    int totalDamage = die1 + die2;
+
+    int healAmount = 0;
 
     foreach (var slot in itemSlots)
     {
-        if (slot != null)
+        if (slot != null && slot.currentItem != null && slot.currentItem.itemData != null)
         {
-            itemBonus += slot.GetItemValue();
+            if (slot.currentItem.itemData.itemType == ItemData.ItemType.potion)
+            {
+                // Potion heals player for dmg value
+                healAmount += slot.currentItem.itemData.dmg;
+            }
+            else
+            {
+                // Weapon/other items add to damage
+                totalDamage += slot.currentItem.itemData.dmg;
+            }
+
+            // Clear slot after use
+            slot?.ClearSlot();
         }
     }
 
-    int total = die1 + die2 + itemBonus;
-    enemyHP -= total;
-    infoText.text = $"Player attacks! Dice: {die1}+{die2}, Items Bonus: {itemBonus} => Total: {total}\nEnemy HP: {enemyHP}";
-
-    // Clear item slots after use
-    foreach (var slot in itemSlots)
+    // Apply potion healing
+    if (healAmount > 0)
     {
-        if (slot != null) slot.ClearSlot();
+        playerHP += healAmount;
+        infoText.text = $"Player used a potion and healed {healAmount} HP!\n";
     }
 
+    // Apply damage to enemy
+    enemyHP -= totalDamage;
+    infoText.text += $"Player attacks! Dice: {die1}+{die2}, Total Damage: {totalDamage}\nEnemy HP: {enemyHP}";
+
     CheckCombatEnd();
-    if (enemyHP > 0) NextTurn();
+
+    if (enemyHP > 0)
+        NextTurn();
 }
 
     private void OnFleeClick()
@@ -154,20 +181,27 @@ public class CombatMaster : MonoBehaviour
     }
 
     private void EndEncounter(bool playerWon = false)
-{
-    combatPanel.SetActive(false);
-    attackButton.interactable = false;
-    fleeButton.interactable = false;
+    {   
+        MusicMaster.Instance.PlayBackgroundMusic();
 
-    if (playerWon)
-    {
-        // update hunt list
+
+        combatPanel.SetActive(false);
+        attackButton.interactable = false;
+        fleeButton.interactable = false;
+
+        if (playerWon)
+        {
+            Debug.Log("player won");
+            // update hunt list
+            HuntMaster.Instance.RegisterKill();
+        }
+        else
+        {
+            Debug.Log("player lost");
+            // game over return to menu
+            GameOverPanel.SetActive(true);
+        }
     }
-    else
-    {
-        // game over return to menu
-    }
-}
 
 
 

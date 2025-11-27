@@ -13,7 +13,7 @@ public class Room : MonoBehaviour
     public enum RoomType { Safe, Treasure, Encounter }
     public RoomType rType;
     public TreasureRoom treasure;
-    [SerializeField] private EncounterRoom encounter;
+    [SerializeField] public EncounterRoom encounter;
 
     private GameMaster gm;
 

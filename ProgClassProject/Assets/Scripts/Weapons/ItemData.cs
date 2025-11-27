@@ -7,6 +7,14 @@ public class ItemData : ScriptableObject
     public int dmg;
     public GameObject itemPrefab;
     public Sprite icon;
+    public ItemType itemType;
+
+    public enum ItemType
+    {
+        weapon,
+        potion,
+        armor
+    }
 
     public void Collect()
     {

@@ -34,7 +34,7 @@ public class GameMaster : MonoBehaviour
     public BattleMaster battleMaster;
     public PlayerController pc;
     public BackPackUI backpackUI;
-
+    
     //bool roomSearched = false;
     private (int row, int col) playerPos;
 
